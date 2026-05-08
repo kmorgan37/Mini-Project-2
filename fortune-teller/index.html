@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Madame Zara — Oracle of Fates</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --deep: #0a0612;
+      --void: #06030f;
+      --purple: #1a0a2e;
+      --mist: #7b5ea7;
+      --smoke: rgba(180,140,255,0.08);
+      --glow: rgba(180,120,255,0.4);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--void);
+      color: #e8d9f0;
+      font-family: 'Crimson Text', Georgia, serif;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* Starfield */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 20%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 85%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 5% 55%, rgba(200,180,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 75% 10%, rgba(200,180,255,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 88% 75%, rgba(200,180,255,0.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 45% 5%, rgba(201,168,76,0.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 92% 45%, rgba(201,168,76,0.5) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ambient glow orbs */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(80,20,120,0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 30% at 80% 20%, rgba(40,10,80,0.2) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 50% 50%, rgba(60,20,100,0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 18px 48px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+
+    .eyebrow {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 40%, var(--gold) 70%, #e8c060 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      filter: drop-shadow(0 0 20px rgba(201,168,76,0.4));
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: var(--mist);
+      font-size: 1.05rem;
+      margin-top: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 16px auto 0;
+      opacity: 0.5;
+    }
+
+    .main-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .main-grid::before {
+      content: '';
+      position: absolute;
+      inset: -16px 0 0;
+      background: radial-gradient(circle at top, rgba(120,60,220,0.1), transparent 35%);
+      pointer-events: none;
+      filter: blur(16px);
+      opacity: 0.7;
+    }
+
+    .oracle-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .input-panel {
+      width: 100%;
+      background: rgba(10,6,18,0.62);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 26px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 0 24px rgba(120,60,200,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .input-group { margin-bottom: 20px; }
+    .input-group:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 8px;
+      color: #e8d9f0;
+      font-family: 'Crimson Text', serif;
+      font-size: 1rem;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      appearance: none;
+    }
+
+    input[type="text"]::placeholder { color: rgba(180,150,220,0.4); font-style: italic; }
+
+    input[type="text"]:focus, select:focus {
+      border-color: rgba(201,168,76,0.6);
+      box-shadow: 0 0 12px rgba(201,168,76,0.15);
+    }
+
+    select option { background: #1a0a2e; color: #e8d9f0; }
+
+    .ball-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 12px;
+      padding-bottom: 24px;
+    }
+
+    .ball-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(120,60,220,0.1), transparent 55%);
+      filter: blur(16px);
+      z-index: 0;
+    }
+
+    .ball-holder {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ball-claw {
+      display: none;
+    }
+
+    .ball-claw::before {
+      display: none;
+    }
+
+    .ball-claw::after {
+      display: none;
+    }
+
+    .ball-stand {
+      display: none;
+    }
+
+    .ball-stand::before {
+      display: none;
+    }
+
+    .ball-stand::after {
+      display: none;
+    }
+
+    .ball-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(180,140,255,0.3);
+      animation: ringPulse 3s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .ball-ring-2 {
+      inset: -18px;
+      border-color: rgba(150,80,255,0.1);
+      animation: ringPulse 3s ease-in-out infinite 1s;
+    }
+
+    .crystal-ball {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+      user-select: none;
+      box-shadow: 0 0 60px rgba(120,60,220,0.5);
+      overflow: hidden;
+      border: 1px solid rgba(180,140,255,0.3);
+    }
+
+    .crystal-ball::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 70%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .crystal-ball::after {
+      display: none;
+    }
+
+    .crystal-ball:hover { transform: scale(1.03); }
+    .crystal-ball:active { transform: scale(0.97); }
+
+    .ball-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%,
+        rgba(220,200,255,0.15) 0%,
+        rgba(100,60,180,0.4) 30%,
+        rgba(40,10,80,0.8) 60%,
+        rgba(10,5,30,0.95) 100%);
+      border: 1px solid rgba(180,140,255,0.3);
+      box-shadow:
+        0 0 60px rgba(120,60,220,0.5),
+        0 0 120px rgba(80,40,160,0.3),
+        inset 0 0 60px rgba(60,20,120,0.4),
+        inset -10px -10px 30px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transition: box-shadow 0.5s;
+      z-index: 1;
+    }
+
+    .ball-inner::after {
+      content: '';
+      position: absolute;
+      top: 18%;
+      left: 22%;
+      width: 35%;
+      height: 25%;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .ball-inner::before {
+      display: none;
+    }
+
+    .crystal-ball:hover .ball-inner {
+      box-shadow:
+        0 0 80px rgba(140,80,255,0.7),
+        0 0 160px rgba(100,50,200,0.4),
+        inset 0 0 80px rgba(80,30,160,0.5),
+        inset -10px -10px 30px rgba(0,0,0,0.5);
+    }
+
+    .mist {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+
+    .mist-1 {
+      background: radial-gradient(ellipse 80% 50% at 50% 60%, rgba(160,100,255,0.3) 0%, transparent 70%);
+      animation: swirl1 4s ease-in-out infinite;
+    }
+
+    .mist-2 {
+      background: radial-gradient(ellipse 60% 40% at 30% 40%, rgba(100,200,255,0.15) 0%, transparent 70%);
+      animation: swirl2 5s ease-in-out infinite;
+    }
+
+    @keyframes swirl1 {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+    }
+
+    @keyframes swirl2 {
+      0%, 100% { transform: rotate(0deg) scale(1.1); }
+      50% { transform: rotate(-120deg) scale(1); }
+    }
+
+    .ball-inner.active .mist { opacity: 1; }
+
+    .ball-highlight {
+      position: absolute;
+      top: 18%;
+      left: 22%;
+      width: 35%;
+      height: 25%;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .ball-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.2);
+      animation: ringPulse 3s ease-in-out infinite;
+    }
+
+    .ball-ring-2 {
+      inset: -18px;
+      border-color: rgba(150,80,255,0.1);
+      animation: ringPulse 3s ease-in-out infinite 1s;
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
+    }
+
+    .ball-label {
+      margin-top: 16px;
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.5;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      15% { transform: translateX(-8px) rotate(-3deg); }
+      30% { transform: translateX(8px) rotate(3deg); }
+      45% { transform: translateX(-6px) rotate(-2deg); }
+      60% { transform: translateX(6px) rotate(2deg); }
+      75% { transform: translateX(-3px) rotate(-1deg); }
+      90% { transform: translateX(3px) rotate(1deg); }
+    }
+
+    .crystal-ball.shaking { animation: shake 0.7s ease-in-out; }
+
+    .fortune-panel {
+      width: 100%;
+      min-height: 160px;
+      background: rgba(12,7,20,0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 24px rgba(120,60,200,0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .fortune-panel::before {
+      content: '✦';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--gold);
+      opacity: 0.3;
+      font-size: 0.8rem;
+    }
+
+    .fortune-empty {
+      text-align: center;
+      color: rgba(180,150,220,0.4);
+      font-style: italic;
+      font-size: 1.05rem;
+      padding: 30px 0;
+      line-height: 1.7;
+    }
+
+    .fortune-meta {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+      margin-bottom: 16px;
+    }
+
+    .fortune-name { color: var(--gold-light); opacity: 1; }
+
+    .fortune-text {
+      font-size: 1.25rem;
+      line-height: 1.75;
+      font-style: italic;
+      color: #e8d9f0;
+      min-height: 80px;
+    }
+
+    .fortune-text .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--gold);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 0.8s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .fortune-category-badge {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 4px 12px;
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 20px;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    .history-section { width: 100%; }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .history-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    .history-count { font-size: 0.75rem; color: var(--mist); font-style: italic; }
+
+    .history-empty {
+      text-align: center;
+      color: rgba(180,150,220,0.3);
+      font-style: italic;
+      font-size: 0.9rem;
+      padding: 16px 0;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .history-list::-webkit-scrollbar { width: 3px; }
+    .history-list::-webkit-scrollbar-track { background: transparent; }
+    .history-list::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+
+    .history-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 10px;
+      padding: 14px 16px;
+      animation: fadeSlideIn 0.4s ease-out;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .history-item-meta {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.5;
+      margin-bottom: 6px;
+    }
+
+    .history-item-text {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: rgba(220,200,240,0.8);
+      line-height: 1.5;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold);
+      font-family: 'Crimson Text', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0.7;
+    }
+
+    .reset-btn:hover {
+      opacity: 1;
+      background: rgba(201,168,76,0.08);
+      box-shadow: 0 0 15px rgba(201,168,76,0.2);
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-100px) translateX(30px); opacity: 0; }
+    }
+
+    @keyframes fortuneReveal {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fortune-panel.revealing { animation: fortuneReveal 0.5s ease-out; }
+
+    @media (max-width: 600px) {
+      .container { padding: 24px 16px 40px; }
+      h1 { font-size: 1.6rem; }
+      .crystal-ball { width: 160px; height: 160px; }
+      .input-panel, .fortune-panel { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <header>
+    <p class="eyebrow">Est. Since the Dawn of Time</p>
+    <h1>Madame Zara</h1>
+    <p class="subtitle">Oracle of Fates · Seer of Souls · Keeper of Secrets</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="main-grid">
+    <div class="oracle-section">
+
+      <div class="input-panel">
+        <div class="input-group">
+          <label for="userName">Your Name</label>
+          <input type="text" id="userName" placeholder="Enter your name, seeker…" maxlength="40" />
+        </div>
+        <div class="input-group">
+          <label for="category">What do you seek?</label>
+          <select id="category">
+            <option value="">— Choose your fate —</option>
+            <option value="love">💕 Love & Relationships</option>
+            <option value="career">⚔️ Career & Ambition</option>
+            <option value="destiny">🌌 Destiny & Purpose</option>
+            <option value="warning">⚠️ Warnings & Omens</option>
+            <option value="chaos">🌀 Pure Chaos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ball-wrapper">
+        <div class="ball-holder">
+          <div class="crystal-ball" id="crystalBall" title="Click to consult the oracle">
+            <div class="ball-ring"></div>
+            <div class="ball-ring ball-ring-2"></div>
+            <div class="ball-inner" id="ballInner">
+              <div class="mist mist-1"></div>
+              <div class="mist mist-2"></div>
+              <div class="ball-highlight"></div>
+            </div>
+          </div>
+        </div>
+        <p class="ball-label">Touch to reveal your fate</p>
+      </div>
+
+      <div class="fortune-panel" id="fortunePanel">
+        <div class="fortune-empty" id="fortuneEmpty">
+          The oracle awaits…<br/>
+          <span style="font-size:0.85rem; opacity:0.6;">Enter your name, choose a path,<br/>and gaze into the crystal.</span>
+        </div>
+        <div id="fortuneContent" style="display:none;">
+          <div class="fortune-meta">The oracle speaks to <span class="fortune-name" id="fortuneNameDisplay"></span></div>
+          <div class="fortune-text" id="fortuneText"></div>
+          <div id="fortuneBadge" class="fortune-category-badge"></div>
+        </div>
+      </div>
+
+      <div class="history-section">
+        <div class="history-header">
+          <span class="history-title">✦ Chronicle of Consultations</span>
+          <span class="history-count" id="historyCount"></span>
+        </div>
+        <div id="historyEmpty" class="history-empty">No consultations yet…</div>
+        <div class="history-list" id="historyList" style="display:none;"></div>
+      </div>
+
+      <button class="reset-btn" id="resetBtn">✦ Clear All &amp; Begin Again ✦</button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const fortunes = {
+    love: [
+      "The one who laughs at your worst jokes is already closer than you think.",
+      "A message left unread holds more power than you dare admit.",
+      "Two hearts orbit each other like moons — neither willing to be the planet.",
+      "The love you keep rehearsing in your head will never sound right out loud. Say it anyway.",
+      "You will meet someone at the exact moment you have stopped looking.",
+      "The person you keep comparing everyone to? You should call them.",
+      "Your heart has been speaking a language your mind refuses to translate.",
+      "An unexpected reunion approaches — carry no bitterness, only curiosity.",
+      "You protect yourself by making yourself unknowable. The stars find this exhausting.",
+      "The right person will not complete you. They will confuse you beautifully.",
+    ],
+    career: [
+      "The opportunity disguised as an inconvenience arrives before the next moon.",
+      "You have been building someone else's dream with your best hours. The stars notice.",
+      "A door you once closed will creak open. This time, do not hesitate at the threshold.",
+      "Your greatest competitor is the version of yourself from two years ago. You are winning.",
+      "The idea you dismissed over coffee last Thursday deserves a second audience.",
+      "Ambition without rest is a fire that consumes the house it was meant to warm.",
+      "Someone in a position of power is watching you more carefully than you know.",
+      "The path forward requires you to admit, publicly, that you were wrong. Do it.",
+      "A collaboration is coming that will feel effortless — trust it, this is rare.",
+      "Stop asking for permission. The authority you seek lives already within you.",
+    ],
+    destiny: [
+      "You were not lost. You were in an extended orientation.",
+      "The version of you that exists in ten years is currently hoping you order the salad. Ignore them.",
+      "Your purpose is not a destination. It is the particular way you move through rooms.",
+      "A pattern you have repeated seven times is about to make itself obvious. Wave back.",
+      "The thing you call your flaw is the thing the universe calls your instrument.",
+      "You arrived exactly on time. The feeling that you are late is a rumor.",
+      "Every detour you have taken has deposited something necessary into your character.",
+      "The life you imagined at age twelve still wants to negotiate.",
+      "Your story has a chapter the reader will not see coming. Neither will you.",
+      "You are standing at the exact crossroads your soul requested before it arrived here.",
+    ],
+    warning: [
+      "The person who speaks most confidently in the room knows the least. You already suspected this.",
+      "There is a shortcut being offered to you. It is not a shortcut.",
+      "Something you have ignored for six months is preparing a strongly worded letter.",
+      "The energy you spend worrying about one relationship could power a small city. Reconsider the investment.",
+      "A decision made in exhaustion will require three decisions to undo. Sleep first.",
+      "Someone close to you is not saying the thing they most need to say. Ask them.",
+      "You are about to say something you will spend considerable time explaining. Pause.",
+      "The password you reuse everywhere is a disaster waiting for a Tuesday.",
+      "That small voice telling you something is off? It has excellent credentials.",
+      "Mercury is in retrograde. Actually, everything is always in retrograde. Proceed with caution.",
+    ],
+    chaos: [
+      "A pigeon knows something about you. It has told the others.",
+      "You will find a sock you lost in 2019. Its partner is gone forever. Grieve.",
+      "The moon is an egg. The stars ask that you do not repeat this.",
+      "Someone will describe you today as 'a lot.' This is a compliment from the universe.",
+      "Your houseplant has opinions. They are largely critical.",
+      "You will accidentally make eye contact with someone for four seconds too long. This changes everything.",
+      "The universe is 13.8 billion years old and it arranged all of its matter specifically to create your current predicament.",
+      "A duck will figure prominently in a story you will tell for the rest of your life.",
+      "You are the main character. Unfortunately so is everyone else.",
+      "Something you own is watching you. It is not sure what it is feeling.",
+    ],
+  };
+
+  const categoryLabels = {
+    love: '💕 Love & Relationships',
+    career: '⚔️ Career & Ambition',
+    destiny: '🌌 Destiny & Purpose',
+    warning: '⚠️ Warnings & Omens',
+    chaos: '🌀 Pure Chaos',
+  };
+
+  let history = [];
+  let isAnimating = false;
+
+  const ball = document.getElementById('crystalBall');
+  const ballInner = document.getElementById('ballInner');
+  const nameInput = document.getElementById('userName');
+  const categorySelect = document.getElementById('category');
+  const fortunePanel = document.getElementById('fortunePanel');
+  const fortuneEmpty = document.getElementById('fortuneEmpty');
+  const fortuneContent = document.getElementById('fortuneContent');
+  const fortuneText = document.getElementById('fortuneText');
+  const fortuneNameDisplay = document.getElementById('fortuneNameDisplay');
+  const fortuneBadge = document.getElementById('fortuneBadge');
+  const historyList = document.getElementById('historyList');
+  const historyEmpty = document.getElementById('historyEmpty');
+  const historyCount = document.getElementById('historyCount');
+  const resetBtn = document.getElementById('resetBtn');
+
+  function spawnParticles() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (8 + Math.random() * 12) + 's';
+      p.style.animationDelay = (Math.random() * 15) + 's';
+      p.style.opacity = 0;
+      p.style.background = Math.random() > 0.5 ? 'var(--gold)' : 'rgba(160,100,255,0.8)';
+      container.appendChild(p);
+    }
+  }
+  spawnParticles();
+
+  function typewrite(el, text, speed = 28) {
+    return new Promise(resolve => {
+      el.innerHTML = '';
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      let i = 0;
+      function tick() {
+        if (i < text.length) {
+          el.innerHTML = text.slice(0, ++i);
+          el.appendChild(cursor);
+          setTimeout(tick, speed + Math.random() * 20);
+        } else {
+          setTimeout(() => { cursor.remove(); resolve(); }, 1200);
+        }
+      }
+      tick();
+    });
+  }
+
+  async function consultOracle() {
+    if (isAnimating) return;
+
+    const name = nameInput.value.trim();
+    const category = categorySelect.value;
+
+    if (!name) {
+      nameInput.style.borderColor = 'rgba(255,100,100,0.6)';
+      nameInput.placeholder = 'The oracle requires your name…';
+      nameInput.focus();
+      setTimeout(() => {
+        nameInput.style.borderColor = '';
+        nameInput.placeholder = 'Enter your name, seeker…';
+      }, 2000);
+      return;
+    }
+
+    if (!category) {
+      categorySelect.style.borderColor = 'rgba(255,100,100,0.6)';
+      setTimeout(() => categorySelect.style.borderColor = '', 2000);
+      return;
+    }
+
+    isAnimating = true;
+
+    ball.classList.add('shaking');
+    ballInner.classList.add('active');
+    setTimeout(() => ball.classList.remove('shaking'), 700);
+
+    const pool = fortunes[category];
+    const fortune = pool[Math.floor(Math.random() * pool.length)];
+
+    await new Promise(r => setTimeout(r, 800));
+
+    fortuneEmpty.style.display = 'none';
+    fortuneContent.style.display = 'block';
+    fortuneNameDisplay.textContent = name;
+    fortuneBadge.textContent = categoryLabels[category];
+    fortunePanel.classList.add('revealing');
+    setTimeout(() => fortunePanel.classList.remove('revealing'), 500);
+
+    await typewrite(fortuneText, fortune);
+
+    addToHistory(name, category, fortune);
+    isAnimating = false;
+  }
+
+  function addToHistory(name, category, fortune) {
+    history.unshift({ name, category, fortune });
+    historyEmpty.style.display = 'none';
+    historyList.style.display = 'flex';
+    historyCount.textContent = history.length === 1 ? '1 consultation' : `${history.length} consultations`;
+
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML = `
+      <div class="history-item-meta">${name} · ${categoryLabels[category]}</div>
+      <div class="history-item-text">${fortune}</div>
+    `;
+    historyList.prepend(item);
+  }
+
+  function resetAll() {
+    history = [];
+    nameInput.value = '';
+    categorySelect.value = '';
+    fortuneEmpty.style.display = 'block';
+    fortuneContent.style.display = 'none';
+    fortuneText.innerHTML = '';
+    ballInner.classList.remove('active');
+    historyList.innerHTML = '';
+    historyList.style.display = 'none';
+    historyEmpty.style.display = 'block';
+    historyCount.textContent = '';
+  }
+
+  ball.addEventListener('click', consultOracle);
+  resetBtn.addEventListener('click', resetAll);
+  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') consultOracle(); });
+  categorySelect.addEventListener('keydown', e => { if (e.key === 'Enter') consultOracle(); });
+</script>
+</body>
+</html>
