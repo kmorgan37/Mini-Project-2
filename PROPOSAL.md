@@ -1,4 +1,4 @@
-# PROPOSAL.md
+# Mini Project #2 — Proposal 
 
 ## What I'm building
 A Fortune Teller web app where users ask life questions and receive dramatic, mysterious fortunes from an all-knowing oracle.
